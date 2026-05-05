@@ -8,6 +8,7 @@ const positions = [-3, -2, -1, 0, 1, 2, 3];
 const TestimonialSlider = () => {
   const [active, setActive] = useState(0);
   const [showArrows, setShowArrows] = useState(false);
+  const [gap, setGap] = useState(220);
 
   const refs = useRef([]);
   const textRef = useRef(null);
@@ -19,9 +20,21 @@ const TestimonialSlider = () => {
   const hideTimer = useRef(null);
 
   const total = testimonials.length;
-  const gap = 220;
 
   const getIndex = (i) => (i + total) % total;
+
+  // ✅ RESPONSIVE GAP
+  useEffect(() => {
+    const updateGap = () => {
+      if (window.innerWidth < 480) setGap(90);
+      else if (window.innerWidth < 768) setGap(130);
+      else setGap(220);
+    };
+
+    updateGap();
+    window.addEventListener("resize", updateGap);
+    return () => window.removeEventListener("resize", updateGap);
+  }, []);
 
   // layout
   const setLayout = (offset = 0) => {
@@ -36,7 +49,7 @@ const TestimonialSlider = () => {
       let opacity = 1;
 
       if (distance === 0) {
-        scale = 1.4;
+        scale = window.innerWidth < 480 ? 1.2 : 1.4;
       } else if (distance === 1) {
         scale = 1;
         opacity = 0.6;
@@ -70,24 +83,23 @@ const TestimonialSlider = () => {
   useEffect(() => {
     setLayout(0);
     animateContent();
-  }, [active]);
+  }, [active, gap]);
 
-  // drag
-  const handleDown = (e) => {
+  // ================= DRAG (MOUSE + TOUCH) =================
+  const startDrag = (x) => {
     isDragging.current = true;
-    startX.current = e.clientX;
+    startX.current = x;
   };
 
-  const handleMove = (e) => {
+  const moveDrag = (x) => {
     if (!isDragging.current) return;
 
-    const diff = e.clientX - startX.current;
+    const diff = x - startX.current;
     currentX.current = diff;
-
     setLayout(diff);
   };
 
-  const handleUp = () => {
+  const endDrag = () => {
     if (!isDragging.current) return;
 
     const diff = currentX.current;
@@ -112,7 +124,6 @@ const TestimonialSlider = () => {
   };
 
   const handleMouseLeave = () => {
-    // delay hide so user can move into arrow safely
     hideTimer.current = setTimeout(() => {
       setShowArrows(false);
     }, 200);
@@ -124,41 +135,45 @@ const TestimonialSlider = () => {
   };
 
   return (
-    <section className="w-full py-15 bg-[#f3f3f3] text-center select-none ">
+    <section className="w-full py-12 md:py-15 bg-[#f3f3f3] text-center select-none">
 
-      <h2 className="text-xl tracking-[3px] text-gray-700 mb-16">
+      <h2 className="text-sm md:text-xl tracking-[2px] md:tracking-[3px] text-gray-700 mb-10 md:mb-16">
         WHAT OUR CUSTOMERS HAVE TO SAY
       </h2>
 
-      {/* OUTER WRAPPER (850px reference box) */}
-      <div className="relative w-[850px] h-[140px] mx-auto flex justify-center items-center overflow-visible">
+      {/* ✅ RESPONSIVE WRAPPER */}
+      <div className="relative w-full max-w-[850px] h-[120px] md:h-[140px] mx-auto flex justify-center items-center">
 
-        {/* LEFT ARROW (OUTSIDE EDGE) */}
+        {/* LEFT ARROW */}
         <button
           onClick={prev}
           onMouseEnter={handleArrowEnter}
           className={`
-            absolute -left-10 top-1/2 -translate-y-1/2 z-50
+            absolute left-2 md:-left-10 top-1/2 -translate-y-1/2 z-50
             transition-all duration-300
-            ${showArrows ? "opacity-100 " : "opacity-0 pointer-events-none"}
+            ${showArrows ? "opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}
             text-gray-600 hover:text-black
           `}
         >
-          <RiArrowLeftLongLine size={28} />
-        </button> 
+          <RiArrowLeftLongLine size={26} />
+        </button>
 
-        {/* IMAGE AREA */}
+        {/* SLIDER */}
         <div
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           className="relative w-full h-full flex justify-center items-center overflow-hidden"
         >
-          {/* IMAGES */}
           <div
-            onMouseDown={handleDown}
-            onMouseMove={handleMove}
-            onMouseUp={handleUp}
-            onMouseLeave={handleUp}
+            onMouseDown={(e) => startDrag(e.clientX)}
+            onMouseMove={(e) => moveDrag(e.clientX)}
+            onMouseUp={endDrag}
+            onMouseLeave={endDrag}
+
+            onTouchStart={(e) => startDrag(e.touches[0].clientX)}
+            onTouchMove={(e) => moveDrag(e.touches[0].clientX)}
+            onTouchEnd={endDrag}
+
             className="relative w-full h-full flex justify-center items-center cursor-grab active:cursor-grabbing"
           >
             {positions.map((pos, i) => {
@@ -171,48 +186,49 @@ const TestimonialSlider = () => {
                   ref={(el) => (refs.current[i] = el)}
                   src={item.image}
                   draggable="false"
-                  className="absolute w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover shadow-md"
+                  className="absolute 
+                    w-14 h-14 
+                    sm:w-16 sm:h-16 
+                    md:w-24 md:h-24 
+                    rounded-2xl object-cover shadow-md"
                 />
               );
             })}
           </div>
         </div>
 
-        {/* RIGHT ARROW (OUTSIDE EDGE) */}
+        {/* RIGHT ARROW */}
         <button
           onClick={next}
           onMouseEnter={handleArrowEnter}
           className={`
-            absolute -right-10 top-1/2 -translate-y-1/2 z-50
+            absolute right-2 md:-right-10 top-1/2 -translate-y-1/2 z-50
             transition-all duration-300
-            ${showArrows ? "opacity-100 " : "opacity-0  pointer-events-none"}
+            ${showArrows ? "opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}
             text-gray-600 hover:text-black
           `}
         >
-          <RiArrowRightLongLine size={28} />
+          <RiArrowRightLongLine size={26} />
         </button>
 
       </div>
 
-
-
-
       {/* ⭐ STARS */}
-      <div ref={starsRef} className="mt-10 text-yellow-400 text-2xl font-[font2]">
+      <div ref={starsRef} className="mt-8 md:mt-10 text-yellow-400 text-xl md:text-2xl font-[font2]">
         ★★★★★
       </div>
 
       {/* 💬 TEXT */}
       <div ref={textRef} key={active}>
-        <p className="mt-4 max-w-2xl mx-auto text-gray-700 font-[font2] font-medium text-lg ">
+        <p className="mt-4 px-4 max-w-2xl mx-auto text-gray-700 font-[font2] font-medium text-sm sm:text-base md:text-lg">
           {testimonials[active].review}
         </p>
 
-        <p className="mt-4 text-lg font-[font] font-light tracking-wider  text-gray-500">
+        <p className="mt-4 text-base md:text-lg font-[font] font-light tracking-wider text-gray-500">
           — {testimonials[active].name}
         </p>
 
-        <p className=" mt-2 text-sm text-gray-400 font-[font2] font-light">
+        <p className="mt-2 text-xs md:text-sm text-gray-400 font-[font2] font-light">
           {testimonials[active].username}
         </p>
       </div>

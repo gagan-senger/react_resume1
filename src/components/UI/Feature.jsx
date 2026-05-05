@@ -10,12 +10,12 @@ export const Features = () => {
                     Why Perfume 24X7 ?
                 </h3>
 
-                {/* Mobile: 2x2 Grid | Desktop: Horizontal Row */}
+                {/* FIXED LAYOUT */}
                 <div className="
-          grid grid-cols-2 gap-6
-          lg:flex lg:flex-nowrap lg:overflow-x-auto lg:gap-12
-          lg:justify-start
-        ">
+                    grid grid-cols-2 gap-6
+                    md:grid-cols-3
+                    lg:flex lg:flex-wrap lg:justify-center lg:gap-10
+                ">
 
                     {features.map((item) => {
                         const Icon = item.icon;
@@ -24,11 +24,9 @@ export const Features = () => {
                             <div
                                 key={item.id}
                                 className="
-                  flex flex-col items-center text-center
-                  p-2 lg:p-0
-                  lg:min-w-[260px] lg:shrink-0
-                "
-                            >
+                                    flex flex-col items-center text-center
+                                    p-2 lg:p-0
+                                    lg:w-[280px]">
                                 <Icon className="w-12 h-12 md:w-16 md:h-16 mb-4 text-gray-800" />
 
                                 <h2 className="text-sm sm:text-base md:text-xl font-medium text-gray-700 mb-2">

@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: font;
+    src: url(/font/font1);
+}
+
+@font-face {
+    font-family: font1;
+    src: url(/font/font.woff2);
+}
+
+@font-face {
+    font-family: font2;
+    src: url(/font/font2.woff2);
+}
+
+@font-face {
+    font-family: font3;
+    src: url(/font/font3.woff2);
+}
+
+@font-face {
+    font-family: font4;
+    src: url(/font/font4.woff2);
+}
+
+/* Hero.jsx Button animation */
+.hero-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Shine effect */
+.hero-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.5) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-25deg);
+    transition: left 0.5s ease;
+    pointer-events: none;
+}
+
+/* Hover animation */
+.hero-btn:hover::before {
+    left: 125%;
+}
+
+
+
+/* ProductCard animation */
+.cart-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.cart-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.6) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-25deg);
+    transition: left 0.8s ease;
+}
+
+.cart-btn:hover::before {
+    left: 130%;
+}
+
+
+
+
+/* /* Arrival Animation * */
+.all-btn {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.all-btn span {
+    z-index: -1;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.6s ease;
+}

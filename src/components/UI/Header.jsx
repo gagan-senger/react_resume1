@@ -69,7 +69,7 @@ export const Header = () => {
                         </div>
 
                         {/* CENTER NAV (DESKTOP ONLY) */}
-                        <ul className="hidden md:flex items-center gap-8">
+                        <ul className="hidden md:flex items-center gap-16">
                             <li><NavLink className={`${textColor} text-[1.1rem] md:text-[1.3rem] lg:text-[1.5rem] font-[font] `} to="/">Home</NavLink></li>
                             <li><NavLink className={`${textColor} text-[1.1rem] md:text-[1.3rem] lg:text-[1.5rem] font-[font] `} to="/menproducts">Men</NavLink></li>
 
